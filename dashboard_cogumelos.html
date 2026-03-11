@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulário Consultorias – Cogumelos Vale Verde</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #2d5a27;
+    --verde-claro: #4a8c3f;
+    --verde-neon: #7bc67a;
+    --bege: #f5f0e8;
+    --bege-escuro: #e8e0d0;
+    --laranja: #e07b39;
+    --azul: #3a6b9e;
+    --roxo: #7c5cbf;
+    --cinza: #8a8a8a;
+    --branco: #fafaf8;
+    --preto: #1a1a1a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bege);
+    color: var(--preto);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--verde);
+    color: var(--branco);
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 4px solid var(--verde-neon);
+  }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    letter-spacing: -0.5px;
+  }
+
+  header span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    padding: 24px 32px 0;
+  }
+
+  .card {
+    background: var(--branco);
+    border-radius: 12px;
+    padding: 20px;
+    border-left: 5px solid var(--cinza);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .card.total { border-color: var(--verde); }
+  .card.atendido { border-color: var(--azul); }
+  .card.vendeu { border-color: var(--verde-neon); }
+  .card.pendente { border-color: var(--laranja); }
+  .card.perdido { border-color: #c0392b; }
+
+  .card .num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    line-height: 1;
+    color: var(--preto);
+  }
+  .card .label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--cinza);
+    margin-top: 4px;
+  }
+  .card .pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    margin-top: 6px;
+    color: var(--verde-claro);
+    font-weight: 500;
+  }
+
+  .filtros {
+    padding: 20px 32px 0;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filtros label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--cinza);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .filtros select {
+    padding: 8px 14px;
+    border: 1.5px solid var(--bege-escuro);
+    border-radius: 8px;
+    background: var(--branco);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .filtros select:focus { border-color: var(--verde-claro); }
+
+  .tabela-wrap {
+    padding: 20px 32px 40px;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--branco);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+
+  thead {
+    background: var(--verde);
+    color: var(--branco);
+  }
+
+  thead th {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--bege-escuro);
+    transition: background 0.15s;
+  }
+
+  tbody tr:hover { background: #f0ebe0; }
+  tbody tr:last-child { border-bottom: none; }
+
+  tbody td {
+    padding: 13px 16px;
+    font-size: 0.85rem;
+    vertical-align: top;
+  }
+
+  .nome { font-weight: 600; color: var(--preto); }
+  .cidade { font-size: 0.78rem; color: var(--cinza); }
+  .objetivo { font-size: 0.78rem; max-width: 180px; color: #555; line-height: 1.35; }
+  .investimento { font-family: 'DM Mono', monospace; font-size: 0.78rem; }
+
+  /* STATUS SELECT */
+  .status-select {
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 2px solid transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    text-align: center;
+    min-width: 130px;
+    transition: all 0.2s;
+  }
+
+  .status-pendente { background: #fff3e0; color: #e07b39; border-color: #e07b39; }
+  .status-atendido { background: #e3f0fb; color: #3a6b9e; border-color: #3a6b9e; }
+  .status-vendeu   { background: #e6f7e6; color: #2d7a27; border-color: #4a8c3f; }
+  .status-perdido  { background: #fdecea; color: #c0392b; border-color: #c0392b; }
+  .status-reagendar{ background: #f3eeff; color: #7c5cbf; border-color: #7c5cbf; }
+
+  /* ANOTAÇÃO */
+  .nota-input {
+    width: 100%;
+    min-width: 160px;
+    padding: 6px 10px;
+    border: 1.5px solid var(--bege-escuro);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    background: var(--bege);
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .nota-input:focus { border-color: var(--verde-claro); background: var(--branco); }
+
+  .save-btn {
+    display: block;
+    margin-top: 4px;
+    padding: 3px 10px;
+    background: var(--verde);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .save-btn:hover { background: var(--verde-claro); }
+
+  .salvo-ok {
+    font-size: 0.7rem;
+    color: var(--verde-claro);
+    font-weight: 600;
+    margin-top: 3px;
+    display: none;
+  }
+
+  .badge-canal {
+    background: var(--bege-escuro);
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 0.72rem;
+    color: #555;
+    font-weight: 500;
+  }
+
+  .card.faturamento { border-color: #f0c040; }
+  .valor-input {
+    width: 100%;
+    min-width: 110px;
+    padding: 5px 10px;
+    border: 1.5px solid var(--bege-escuro);
+    border-radius: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    background: var(--bege);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .valor-input:focus { border-color: var(--verde-claro); background: var(--branco); }
+  .valor-row { display: flex; gap: 6px; align-items: center; margin-top: 4px; }
+
+  @media (max-width: 700px) {
+    header { flex-direction: column; gap: 6px; }
+    .cards { padding: 16px; gap: 10px; }
+    .filtros, .tabela-wrap { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🍄 Cogumelos Vale Verde — Formulário Consultorias</h1>
+  <span id="dataAtual"></span>
+</header>
+
+<div class="cards" id="cards"></div>
+
+<div class="filtros">
+  <label>Filtrar por status:</label>
+  <select id="filtroStatus" onchange="renderTabela()">
+    <option value="">Todos</option>
+    <option value="Pendente">Pendente</option>
+    <option value="Atendido">Atendido</option>
+    <option value="Vendeu">Vendeu ✅</option>
+    <option value="Perdido">Perdido ❌</option>
+    <option value="Reagendar">Reagendar</option>
+  </select>
+  <label>Objetivo:</label>
+  <select id="filtroObjetivo" onchange="renderTabela()">
+    <option value="">Todos</option>
+    <option value="renda extra">Renda Extra</option>
+    <option value="negócio">Negócio</option>
+    <option value="melhorar">Já produz</option>
+  </select>
+</div>
+
+<div class="tabela-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nome</th>
+        <th>Cidade / UF</th>
+        <th>Objetivo</th>
+        <th>Experiência</th>
+        <th>Investimento</th>
+        <th>Canal</th>
+        <th>Status</th>
+        <th>Valor Venda</th>
+        <th>Anotações</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<script>
+const leads = [
+  { id:1, nome:"Tiago Barbosa Orozimbo", cidade:"Paty do Alferes - RJ", objetivo:"Quero começar um cultivo para renda extra", experiencia:"Nunca cultivei", investimento:"R$5.000 – R$15.000", canal:"Giovanni / Hayashii Cogumelos", data:"06/03/2026" },
+  { id:2, nome:"Alessandra Lemes Pereira", cidade:"Araquari - MG", objetivo:"Quero começar um cultivo para renda extra", experiencia:"Nunca cultivei", investimento:"R$5.000 – R$15.000", canal:"Instagram", data:"09/03/2026" },
+  { id:3, nome:"Carlos Eduardo Taglioli", cidade:"Andradas - MG", objetivo:"Quero começar um cultivo para renda extra", experiencia:"Nunca cultivei", investimento:"Até R$5.000", canal:"YouTube", data:"09/03/2026" },
+  { id:4, nome:"Reinaldo Husch", cidade:"Castro - PR", objetivo:"Já produzo e quero melhorar minha operação", experiencia:"Já produzo em pequena escala", investimento:"R$15.000 – R$50.000", canal:"Instagram", data:"09/03/2026" },
+  { id:5, nome:"Sergio Thuler Coelho", cidade:"Nova Friburgo - RJ", objetivo:"Quero estruturar um negócio de produção", experiencia:"Nunca cultivei", investimento:"R$15.000 – R$50.000", canal:"TikTok", data:"09/03/2026" },
+  { id:6, nome:"Leonardo Merloto Cypriani", cidade:"Rio das Pedras - SP", objetivo:"Quero estruturar um negócio de produção", experiencia:"Nunca cultivei", investimento:"Até R$5.000", canal:"TikTok", data:"09/03/2026" },
+  { id:7, nome:"Renata Pereira", cidade:"Paraatú - MG", objetivo:"Quero estruturar um negócio de produção", experiencia:"Já fiz testes pequenos", investimento:"Até R$5.000", canal:"Instagram", data:"09/03/2026" },
+  { id:8, nome:"Agostinho Santos Filho", cidade:"Salvador - BA", objetivo:"Quero estruturar um negócio de produção", experiencia:"Nunca cultivei", investimento:"Até R$5.000", canal:"Instagram", data:"10/03/2026" },
+  { id:9, nome:"Matheus Mayer", cidade:"Medianeira - PR", objetivo:"Já produzo e quero melhorar minha operação", experiencia:"Já produzo em pequena escala", investimento:"R$5.000 – R$15.000", canal:"Instagram", data:"10/03/2026" },
+  { id:10, nome:"Antonio Carlos Martelletto", cidade:"Cambuci - RJ", objetivo:"Quero estruturar um negócio de produção", experiencia:"Nunca cultivei", investimento:"—", canal:"Indicação", data:"10/03/2026" },
+];
+
+// Carregar estado salvo
+function getState() {
+  try { return JSON.parse(localStorage.getItem('cvv_leads') || '{}'); } catch { return {}; }
+}
+function saveState(state) {
+  localStorage.setItem('cvv_leads', JSON.stringify(state));
+}
+
+let state = getState();
+// Inicializar status padrão
+leads.forEach(l => {
+  if (!state[l.id]) state[l.id] = { status: 'Pendente', nota: '' };
+});
+saveState(state);
+
+function statusClass(s) {
+  return { 'Pendente':'status-pendente','Atendido':'status-atendido','Vendeu':'status-vendeu','Perdido':'status-perdido','Reagendar':'status-reagendar' }[s] || 'status-pendente';
+}
+
+function updateCards() {
+  const total = leads.length;
+  const atendidos = leads.filter(l => state[l.id]?.status === 'Atendido').length;
+  const vendeu = leads.filter(l => state[l.id]?.status === 'Vendeu').length;
+  const pendente = leads.filter(l => state[l.id]?.status === 'Pendente').length;
+  const perdido = leads.filter(l => state[l.id]?.status === 'Perdido').length;
+
+  const pctVenda = total > 0 ? Math.round((vendeu / total) * 100) : 0;
+  const pctAtend = total > 0 ? Math.round(((atendidos + vendeu) / total) * 100) : 0;
+
+  const faturamento = leads.reduce((acc, l) => {
+    const v = state[l.id]?.valor || '';
+    const num = parseFloat(v.replace(/[^\d,\.]/g,'').replace(',','.')) || 0;
+    return acc + num;
+  }, 0);
+  const faturamentoFmt = faturamento.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+
+  document.getElementById('cards').innerHTML = `
+    <div class="card total">
+      <div class="num">${total}</div>
+      <div class="label">Total de Leads</div>
+    </div>
+    <div class="card pendente">
+      <div class="num">${pendente}</div>
+      <div class="label">Pendentes</div>
+      <div class="pct">Faltam atender</div>
+    </div>
+    <div class="card atendido">
+      <div class="num">${atendidos}</div>
+      <div class="label">Atendidos</div>
+      <div class="pct">${pctAtend}% do total</div>
+    </div>
+    <div class="card vendeu">
+      <div class="num">${vendeu}</div>
+      <div class="label">Vendas ✅</div>
+      <div class="pct">${pctVenda}% de conversão</div>
+    </div>
+    <div class="card perdido">
+      <div class="num">${perdido}</div>
+      <div class="label">Perdidos ❌</div>
+    </div>
+    <div class="card faturamento">
+      <div class="num" style="font-size:1.5rem">${faturamentoFmt}</div>
+      <div class="label">Total Faturado 💰</div>
+    </div>
+  `;
+}
+
+function renderTabela() {
+  const filtroStatus = document.getElementById('filtroStatus').value;
+  const filtroObj = document.getElementById('filtroObjetivo').value;
+
+  let lista = leads.filter(l => {
+    const s = state[l.id]?.status || 'Pendente';
+    if (filtroStatus && s !== filtroStatus) return false;
+    if (filtroObj && !l.objetivo.toLowerCase().includes(filtroObj)) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = lista.map((l, i) => {
+    const s = state[l.id]?.status || 'Pendente';
+    const nota = state[l.id]?.nota || '';
+    return `
+    <tr>
+      <td><span style="font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--cinza)">${String(i+1).padStart(2,'0')}</span></td>
+      <td>
+        <div class="nome">${l.nome}</div>
+        <div class="cidade" style="margin-top:2px">📅 ${l.data}</div>
+      </td>
+      <td><div class="cidade">${l.cidade}</div></td>
+      <td><div class="objetivo">${l.objetivo}</div></td>
+      <td><div class="cidade">${l.experiencia}</div></td>
+      <td><div class="investimento">${l.investimento}</div></td>
+      <td><span class="badge-canal">${l.canal}</span></td>
+      <td>
+        <select class="status-select ${statusClass(s)}" onchange="changeStatus(${l.id}, this)">
+          <option ${s==='Pendente'?'selected':''}>Pendente</option>
+          <option ${s==='Atendido'?'selected':''}>Atendido</option>
+          <option ${s==='Vendeu'?'selected':''}>Vendeu</option>
+          <option ${s==='Perdido'?'selected':''}>Perdido</option>
+          <option ${s==='Reagendar'?'selected':''}>Reagendar</option>
+        </select>
+      </td>
+      <td>
+        <input class="valor-input" type="text" id="valor-${l.id}" value="${state[l.id]?.valor || ''}" placeholder="Ex: R$ 1.500" oninput="saveValor(${l.id}, this.value)" />
+      </td>
+      <td>
+        <textarea class="nota-input" rows="2" id="nota-${l.id}" placeholder="Ex: Ligado em 10/03, aguardando...">${nota}</textarea>
+        <button class="save-btn" onclick="saveNota(${l.id})">Salvar nota</button>
+        <div class="salvo-ok" id="ok-${l.id}">✓ Salvo!</div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function changeStatus(id, sel) {
+  const novo = sel.value;
+  state[id].status = novo;
+  saveState(state);
+  sel.className = `status-select ${statusClass(novo)}`;
+  updateCards();
+}
+
+function saveValor(id, val) {
+  state[id].valor = val;
+  saveState(state);
+  updateCards();
+}
+
+function saveNota(id) {
+  const txt = document.getElementById(`nota-${id}`).value;
+  state[id].nota = txt;
+  saveState(state);
+  const ok = document.getElementById(`ok-${id}`);
+  ok.style.display = 'block';
+  setTimeout(() => ok.style.display = 'none', 2000);
+}
+
+// Data atual
+const now = new Date();
+document.getElementById('dataAtual').textContent = now.toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+updateCards();
+renderTabela();
+</script>
+</body>
+</html>
